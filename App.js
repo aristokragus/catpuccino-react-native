@@ -1,28 +1,43 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, StatusBar } from 'react-native';
-
-const DAFTAR_MENU = [
-  { id: '1', nama: 'Kopi Susu Catnip', harga: 22000 },
-  { id: '2', nama: 'Matcha Paw Latte', harga: 25000 },
-  { id: '3', nama: 'Croissant Ikan Tuna', harga: 18000 },
-  { id: '4', nama: 'Donat Cakar Kucing', harga: 15000 },
-  { id: '5', nama: 'Ice Choco Purr', harga: 20000 },
-];
+import React, { useState } from 'react';
+import { SafeAreaView, View, Text, StyleSheet, ScrollView, StatusBar } from 'react-native';
+import OrderSummary from './OrderSummary';
+import MenuItem from './MenuItem';
 
 export default function App() {
+  const [totalPesanan, setTotalPesanan] = useState(0);
+
+  const DAFTAR_MENU = [
+    { id: '1', nama: 'Kopi Susu Catnip', harga: 20000 },
+    { id: '2', nama: 'Matcha Paw Latte', harga: 25000 },
+    { id: '3', nama: 'Croissant Ikan Tuna', harga: 18000 },
+    { id: '4', nama: 'Donat Cakar Kucing', harga: 15000 },
+    { id: '5', nama: 'Ice Choco Purr', harga: 22000 },
+  ];
+
+  const handleTambahPesanan = (delta) => {
+    setTotalPesanan((prev) => Math.max(0, prev + delta));
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor="#E65100" />
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Catpuccino</Text>
-        <Text style={styles.headerSubtitle}>Kafe Kucing Ramah & Nyaman</Text>
+        <Text style={styles.headerSubtitle}>Silakan pilih menu pesanan Anda</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.list}>
+
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+        <OrderSummary totalCount={totalPesanan} />
+
+        <Text style={styles.sectionTitle}>Daftar Menu</Text>
         {DAFTAR_MENU.map((item) => (
-          <View key={item.id} style={styles.card}>
-            <Text style={styles.nama}>{item.nama}</Text>
-            <Text style={styles.harga}>Rp {item.harga.toLocaleString('id-ID')}</Text>
-          </View>
+          <MenuItem
+            key={item.id}
+            nama={item.nama}
+            harga={item.harga}
+            onTambahPesanan={handleTambahPesanan}
+          />
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -30,42 +45,36 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
   header: {
     backgroundColor: '#E65100',
-    paddingVertical: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#FFFFFF',
+    marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 13,
-    color: '#FFE0B2',
-    marginTop: 4,
+    color: '#FFFFFF',
+    opacity: 0.9,
   },
-  list: {
+  container: {
     padding: 16,
+    paddingBottom: 24,
   },
-  card: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 10,
-    marginBottom: 12,
-  },
-  nama: {
+  sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#212121',
-  },
-  harga: {
-    fontSize: 14,
-    color: '#E65100',
-    marginTop: 4,
+    marginBottom: 10,
+    marginLeft: 2,
   },
 });

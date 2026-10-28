@@ -1,36 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const formatRupiah = (angka) => {
-  return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-};
-
-export default function MenuItem({ nama, harga }) {
+export default function MenuItem({ nama, harga, onTambahPesanan }) {
   const [qty, setQty] = useState(0);
 
   const handleTambah = () => {
-    setQty((prev) => prev + 1);
+    setQty(prev => prev + 1);
+    onTambahPesanan(1);
   };
 
   const handleKurang = () => {
     if (qty > 0) {
-      setQty((prev) => prev - 1);
+      setQty(prev => prev - 1);
+      onTambahPesanan(-1);
     }
+  };
+
+  const formatRupiah = (angka) => {
+    return 'Rp ' + angka.toLocaleString('id-ID');
   };
 
   return (
     <View style={styles.card}>
-      <View style={styles.info}>
-        <Text style={styles.nama}>{nama}</Text>
-        <Text style={styles.harga}>{formatRupiah(harga)}</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.namaText}>{nama}</Text>
+        <Text style={styles.hargaText}>{formatRupiah(harga)}</Text>
       </View>
-      <View style={styles.counter}>
-        <TouchableOpacity style={styles.button} onPress={handleKurang}>
-          <Text style={styles.buttonText}>-</Text>
+
+      <View style={styles.actionContainer}>
+        <TouchableOpacity
+          style={[styles.btn, qty === 0 && styles.btnDisabled]}
+          onPress={handleKurang}
+          disabled={qty === 0}
+        >
+          <Text style={[styles.btnText, qty === 0 && styles.btnTextDisabled]}>-</Text>
         </TouchableOpacity>
-        <Text style={styles.qty}>{qty}</Text>
-        <TouchableOpacity style={styles.button} onPress={handleTambah}>
-          <Text style={styles.buttonText}>+</Text>
+
+        <Text style={styles.qtyText}>{qty}</Text>
+
+        <TouchableOpacity style={styles.btn} onPress={handleTambah}>
+          <Text style={styles.btnText}>+</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -40,48 +49,61 @@ export default function MenuItem({ nama, harga }) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 10,
     padding: 14,
+    borderRadius: 8,
     marginBottom: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  info: {
+  infoContainer: {
     flex: 1,
   },
-  nama: {
-    fontSize: 15,
-    fontWeight: '600',
+  namaText: {
+    fontSize: 16,
+    fontWeight: 'bold',
     color: '#212121',
+    marginBottom: 4,
   },
-  harga: {
-    fontSize: 13,
-    color: '#E65100',
-    marginTop: 4,
+  hargaText: {
+    fontSize: 14,
+    color: '#666666',
   },
-  counter: {
+  actionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  button: {
-    backgroundColor: '#E65100',
+  btn: {
     width: 32,
     height: 32,
     borderRadius: 6,
+    backgroundColor: '#EEEEEE',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
   },
-  buttonText: {
-    color: '#FFFFFF',
+  btnDisabled: {
+    backgroundColor: '#F5F5F5',
+    borderColor: '#E0E0E0',
+  },
+  btnText: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#212121',
+    lineHeight: 20,
   },
-  qty: {
+  btnTextDisabled: {
+    color: '#BDBDBD',
+  },
+  qtyText: {
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#212121',
     marginHorizontal: 12,
+    minWidth: 18,
+    textAlign: 'center',
+    color: '#212121',
   },
 });
